@@ -1,0 +1,14 @@
+{
+  "name": "ytmusic",
+  "version": "1.0.0",
+  "description": "A youtube music app",
+  "main": "src/index.ts",
+  "author": "uDaanilo",
+  "license": "MIT",
+  "scripts": {
+    "start": "electron dist"
+  },
+  "devDependencies": {
+    "electron": "^14.0.1"
+  }
+}

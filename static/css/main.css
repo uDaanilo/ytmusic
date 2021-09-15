@@ -1,0 +1,40 @@
+#layout > ytmusic-nav-bar {
+  -webkit-app-region: drag;
+}
+
+#layout > ytmusic-nav-bar > div.center-content.style-scope.ytmusic-nav-bar > ytmusic-pivot-bar-renderer, #layout > ytmusic-nav-bar > div.center-content.style-scope.ytmusic-nav-bar > ytmusic-search-box, #layout > ytmusic-nav-bar .left-content, #layout > ytmusic-nav-bar .right-content {
+  -webkit-app-region: no-drag;
+}
+
+ #btn-close, #btn-minimize {
+  background-color: transparent;
+  border: 0;
+  outline: none;
+  color: #fff;
+  max-height: 25px;
+  cursor: pointer;
+  font-size: 18px;
+  -webkit-app-region: none;
+}
+
+#right-content {
+  -webkit-app-region: drag;
+  padding: 0 6px;
+}
+
+#right-content > a {
+  -webkit-app-region: none;
+}
+
+::-webkit-scrollbar-track {
+  background-color: #131313 !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px !important;
+  background: #F4F4F4 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #414141 !important;
+}
