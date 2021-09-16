@@ -4,62 +4,95 @@ import { resolve } from 'path'
 
 class MainWindow {
   private app: Electron.App
-  private window: Electron.BrowserWindow
+  public win: Electron.BrowserWindow
 
   constructor(app: Electron.App) {
     this.app = app
+    
     this.init()
 
-    this.window.webContents.openDevTools()
+    this.win.webContents.on('did-finish-load', () => {
+      process.argv.includes('NODE_ENV=development') ? this.win.webContents.openDevTools() : null
 
-    this.window.webContents.on('did-finish-load', () => {
       this.injectCSS()
       this.setTitleBar()
+      this.insertTrackWatcher()
     })
 
     ipcMain.on('minimize-window', () => this.minimizeWindow())
     ipcMain.on('close-window', (e, exit) => this.closeWindow(exit))
+
+    ipcMain.on('play-pause', () => this.playPause())
+    ipcMain.on('next-track', () => this.nextTrack())
+    ipcMain.on('previous-track', () => this.previousTrack())
+
+    ipcMain.on('show-miniplayer', () => this.win.hide())
+    ipcMain.on('hide-miniplayer', () => this.win.show())
   }
   
   private init() {
-    this.window = new BrowserWindow({
+    this.win = new BrowserWindow({
       width: 1280,
       height: 720,
       frame: false,
       backgroundColor: '#000',
       show: true,
       webPreferences: {
-        preload: resolve(__dirname, '..', '..', 'static', 'scripts', 'preload.js'),
+        preload: resolve('static', 'scripts', 'mainPreload.js'),
         contextIsolation: true
       }
     })
 
-    this.window.loadURL('https://music.youtube.com', { userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/71.0' })
+    this.win.loadURL('https://music.youtube.com', { userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/71.0' })
   }
 
   private setTitleBar() {
     const script = readFileSync(resolve(__dirname, '..', '..', 'static', 'scripts', 'setTitleBar.js'))
 
-    this.window.webContents.executeJavaScript(script.toString())
+    this.win.webContents.executeJavaScript(script.toString())
+  }
+
+  private insertTrackWatcher() {
+    const script = readFileSync(resolve('static', 'scripts', 'trackWatcher.js'))
+
+    this.win.webContents.executeJavaScript(script.toString())
   }
 
   private injectCSS() {
     const css = readFileSync(resolve(__dirname, '..', '..', 'static', 'css', 'main.css'))
 
-    this.window.webContents.insertCSS(css.toString())
+    this.win.webContents.insertCSS(css.toString())
   }
 
   public minimizeWindow() {
-    this.window.hide()
+    this.win.minimize()
   }
 
   public closeWindow(exit: boolean = false) {
     if(exit) {
-      this.window.close()
+      this.win.destroy()
       return
     }
 
-    this.window.minimize()
+    ipcMain.emit('show-miniplayer')
+  }
+
+  public playPause() {
+    this.win.webContents.executeJavaScript(`
+      document.querySelector('#play-pause-button').click()
+    `)
+  }
+
+  public nextTrack() {
+    this.win.webContents.executeJavaScript(`
+      document.querySelector('.next-button').click()
+    `)
+  }
+
+  public previousTrack() {
+    this.win.webContents.executeJavaScript(`
+      document.querySelector('.previous-button').click()
+    `)
   }
 }
 

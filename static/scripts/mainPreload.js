@@ -8,5 +8,8 @@ contextBridge.exposeInMainWorld("api", {
   },
   minimizeWindow:() => {
     ipcRenderer.send('minimize-window')
+  },
+  emitTrackUpdate: track => {
+    ipcRenderer.send('track-update', track)
   }
 })
