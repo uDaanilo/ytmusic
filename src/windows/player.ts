@@ -4,9 +4,11 @@ import { resolve } from 'path'
 class PlayerWindow {
   private app: Electron.App
   public win: BrowserWindow
+  private appIcon: string
 
-  constructor(app: Electron.App) {
+  constructor(app: Electron.App, icon: string) {
     this.app = app
+    this.appIcon = icon
 
     this.init()
 
@@ -30,6 +32,7 @@ class PlayerWindow {
       show: false,
       transparent: true,
       alwaysOnTop: true,
+      icon: this.appIcon,
       webPreferences: {
         contextIsolation: true,
         preload: resolve('static', 'scripts', 'playerPreload.js'),

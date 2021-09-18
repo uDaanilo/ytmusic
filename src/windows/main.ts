@@ -5,9 +5,11 @@ import { resolve } from 'path'
 class MainWindow {
   private app: Electron.App
   public win: Electron.BrowserWindow
+  private appIcon: string
 
-  constructor(app: Electron.App) {
+  constructor(app: Electron.App, icon: string) {
     this.app = app
+    this.appIcon = icon
     
     this.init()
 
@@ -36,7 +38,8 @@ class MainWindow {
       height: 720,
       frame: false,
       backgroundColor: '#000',
-      show: true,
+      show: false,
+      icon: this.appIcon,
       webPreferences: {
         preload: resolve('static', 'scripts', 'mainPreload.js'),
         contextIsolation: true
@@ -46,10 +49,12 @@ class MainWindow {
     this.win.loadURL('https://music.youtube.com', { userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/71.0' })
   }
 
-  private setTitleBar() {
+  private async setTitleBar() {
     const script = readFileSync(resolve(__dirname, '..', '..', 'static', 'scripts', 'setTitleBar.js'))
 
-    this.win.webContents.executeJavaScript(script.toString())
+    await this.win.webContents.executeJavaScript(script.toString())
+
+    this.win.show()
   }
 
   private insertTrackWatcher() {
