@@ -5,6 +5,7 @@ import { resolve } from 'path'
 import { ElectronBlocker } from '@cliqz/adblocker-electron'
 import fetch from "cross-fetch"
 import RPC from './rpc'
+import Config from "./config"
 
 class App {
   public app: Electron.App
@@ -12,19 +13,25 @@ class App {
   public playerWindow: PlayerWindow
   public tray: Tray
   public appIcon = resolve(__dirname, 'static', 'img', 'icon.png')
-  public rpc = new RPC()
+  public rpc: RPC | null
+  public config = new Config()
 
   constructor(app: Electron.App) {
     this.app = app
+
+    if(this.config.value.enableRPC)
+      this.rpc = new RPC()
 
     this.app.whenReady()
       .then(() => this.whenReady())
 
     this.app.on('window-all-closed', () => this.app.quit())
+
     ipcMain.on('track-update', (e, track) => {
       this.playerWindow.win.webContents.send('track-update', track)
 
       if(!track.title) return
+      if(!this.rpc) return
 
       this.rpc.setActivity({
         details: track.title,
@@ -62,6 +69,24 @@ class App {
         type: 'normal',
         enabled: false,
         icon
+      },
+      {
+        label: 'Discord Rich Precense',
+        type: 'checkbox',
+        checked: this.config.value.enableRPC,
+        click: () => {
+          const enableRPC = contextMenu.items[1].checked
+
+          this.config.set({ enableRPC })
+
+          if(enableRPC) {
+            this.rpc = new RPC()
+          } else {
+            this.rpc.destroy()
+
+            this.rpc = null
+          }
+        }
       },
       {
         label: 'Quit',

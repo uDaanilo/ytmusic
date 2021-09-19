@@ -1,6 +1,6 @@
 {
   "name": "ytmusic",
-  "version": "1.0.1",
+  "version": "1.0.2",
   "description": "A youtube music app",
   "main": "dist/index.js",
   "author": "uDaanilo",
@@ -36,6 +36,7 @@
       "!README.md",
       "!tsconfig.json"
     ],
+    "extraFiles": ["dist/static/config.json"],
     "win": {
       "icon": "dist/static/img/icon.png"
     },
