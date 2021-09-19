@@ -4,6 +4,7 @@ import PlayerWindow from "./windows/player"
 import { resolve } from 'path'
 import { ElectronBlocker } from '@cliqz/adblocker-electron'
 import fetch from "cross-fetch"
+import RPC from './rpc'
 
 class App {
   public app: Electron.App
@@ -11,6 +12,7 @@ class App {
   public playerWindow: PlayerWindow
   public tray: Tray
   public appIcon = resolve(__dirname, 'static', 'img', 'icon.png')
+  public rpc = new RPC()
 
   constructor(app: Electron.App) {
     this.app = app
@@ -19,7 +21,18 @@ class App {
       .then(() => this.whenReady())
 
     this.app.on('window-all-closed', () => this.app.quit())
-    ipcMain.on('track-update', (e, track) => this.playerWindow.win.webContents.send('track-update', track))
+    ipcMain.on('track-update', (e, track) => {
+      this.playerWindow.win.webContents.send('track-update', track)
+
+      if(!track.title) return
+
+      this.rpc.setActivity({
+        details: track.title,
+        state: track.author,
+        length: track.length - track.currentTime,
+        playing: track.playing
+      })
+    })
   }
   
   private async whenReady() {
