@@ -1,7 +1,7 @@
 setInterval(() => {
   let track = {
     title: document.querySelector("#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.content-info-wrapper.style-scope.ytmusic-player-bar > yt-formatted-string").title,
-    thumbnail: document.querySelector('#song-image #img').src,
+    thumbnail: document.querySelector('#song-image #img').src.startsWith('data') ? document.querySelector("#layout > ytmusic-player-bar > div.middle-controls.style-scope.ytmusic-player-bar > div.thumbnail-image-wrapper.style-scope.ytmusic-player-bar > img").src : document.querySelector('#song-image #img').src,
     length: document.querySelector('video').duration,
     currentTime: document.querySelector('video').currentTime,
     lengthFormatted: document.querySelector("#left-controls > span").innerText,

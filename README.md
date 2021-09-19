@@ -9,11 +9,10 @@
 ## ✔️ Features
 
 - ⏯ Miniplayer
+- 🚫 Adblock
 
 ## 🎁 Download
-
-| Platform | Download
-|----------|----------|
+### You can see all releases [here](https://github.com/uDaanilo/ytmusic/releases)
 
 ## 🚧 Development
 

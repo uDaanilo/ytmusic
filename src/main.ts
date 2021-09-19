@@ -1,7 +1,9 @@
-import { ipcMain, Menu, nativeImage, Tray } from "electron"
+import { ipcMain, Menu, nativeImage, session, Tray } from "electron"
 import MainWindow from "./windows/main"
 import PlayerWindow from "./windows/player"
 import { resolve } from 'path'
+import { ElectronBlocker } from '@cliqz/adblocker-electron'
+import fetch from "cross-fetch"
 
 class App {
   public app: Electron.App
@@ -20,7 +22,8 @@ class App {
     ipcMain.on('track-update', (e, track) => this.playerWindow.win.webContents.send('track-update', track))
   }
   
-  private whenReady() {
+  private async whenReady() {
+    await this.enableAdBlock()
     this.createMainWindow()
     this.createPlayerWindow()
     this.createTray()
@@ -57,6 +60,12 @@ class App {
     ])
 
     this.tray.setContextMenu(contextMenu)
+  }
+
+  private async enableAdBlock() {
+    const blocker = await ElectronBlocker.fromPrebuiltAdsOnly(fetch)
+
+    blocker.enableBlockingInSession(session.defaultSession)
   }
 }
 
