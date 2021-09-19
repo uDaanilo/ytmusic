@@ -8,7 +8,7 @@ class App {
   public mainWindow: MainWindow
   public playerWindow: PlayerWindow
   public tray: Tray
-  public appIcon = resolve('static', 'img', 'icon.png')
+  public appIcon = resolve(__dirname, 'static', 'img', 'icon.png')
 
   constructor(app: Electron.App) {
     this.app = app

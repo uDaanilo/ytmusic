@@ -7,7 +7,7 @@ document.body.prepend(materialIcons)
 const closeBtn = document.createElement('div')
 const minimizeBtn = document.createElement('div')
 
-closeBtn.innerHTML = '<button id="btn-close"><span class="material-icons">close</span></button>'
+closeBtn.innerHTML = '<button title="Shift + Click to close" id="btn-close"><span class="material-icons">close</span></button>'
 minimizeBtn.innerHTML = '<button id="btn-minimize"><span class="material-icons">minimize</span></button>'
 
 document.querySelector("#right-content").prepend(closeBtn)

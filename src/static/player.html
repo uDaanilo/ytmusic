@@ -87,7 +87,7 @@
   <div id="main" style="background-image: url('https://lh3.googleusercontent.com/8woiqRuivih6PgHngNNHaaSwu-11qYL5b5VdW169OzAHaxNxvzF2gminPx43ZCqXv8vGJUzGAoNBDHLn7A=w544-h544-l90-rj');">
     <div id="dragabble"></div>
     <div class="fade"></div>
-    <img height="256px" src="https://lh3.googleusercontent.com/8woiqRuivih6PgHngNNHaaSwu-11qYL5b5VdW169OzAHaxNxvzF2gminPx43ZCqXv8vGJUzGAoNBDHLn7A=w544-h544-l90-rj" crossorigin="anonymous" alt="">
+    <img draggable="false" height="256px" src="https://lh3.googleusercontent.com/8woiqRuivih6PgHngNNHaaSwu-11qYL5b5VdW169OzAHaxNxvzF2gminPx43ZCqXv8vGJUzGAoNBDHLn7A=w544-h544-l90-rj" crossorigin="anonymous" alt="">
     <div class="controls">
       <div style="display: flex;">
         <span id="back" class="material-icons">skip_previous</span>
@@ -109,7 +109,7 @@
     document.title = `${track.title} - ${track.author}`
     document.querySelector("img").title = `${track.title} - ${track.author}`
     document.querySelector("img").src = track.thumbnail
-    document.querySelector('#track_time').innerText = track.lengthFormatted
+    document.querySelector('#track_time').innerText = track.lengthFormatted.trim()
   })
 
   main.addEventListener('dblclick', e => {
@@ -126,6 +126,7 @@
     e.stopPropagation()
     window.api.previousTrack()
   })
+
   document.querySelector('#next').addEventListener('click', e => {
     e.stopPropagation()
     window.api.nextTrack()

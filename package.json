@@ -2,13 +2,45 @@
   "name": "ytmusic",
   "version": "1.0.0",
   "description": "A youtube music app",
-  "main": "src/index.ts",
+  "main": "dist/index.js",
   "author": "uDaanilo",
   "license": "MIT",
+  "repository": "github:uDaanilo/ytmusic",
   "scripts": {
-    "start": "electron dist"
+    "start": "tsc && cp -r src/static dist && electron dist",
+    "dev": "tsc && cp -r src/static dist && electron dist NODE_ENV=development",
+    "publish": "electron-builder --publish",
+    "build": "tsc && cp -r src/static dist && electron-builder build"
   },
   "devDependencies": {
-    "electron": "^14.0.1"
+    "electron": "13.4.0",
+    "electron-builder": "^22.11.7",
+    "typescript": "^4.4.3"
+  },
+  "dependencies": {},
+  "build": {
+    "appId": "com.github.udaanilo.ytmusic",
+    "productName": "YTMusic",
+    "asar": false,
+    "directories": {
+      "output": "out"
+    },
+    "files": [
+      "!src",
+      "!.gitignore",
+      "!README.md",
+      "!tsconfig.json"
+    ],
+    "win": {
+      "icon": "dist/static/img/icon.png"
+    },
+    "nsis": {
+      "installerIcon": "dist/static/img/icon.ico"
+    },
+    "publish": {
+      "github": {
+        "releaseType": "release"
+      }
+    }
   }
 }

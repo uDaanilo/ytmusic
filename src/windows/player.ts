@@ -35,11 +35,12 @@ class PlayerWindow {
       icon: this.appIcon,
       webPreferences: {
         contextIsolation: true,
-        preload: resolve('static', 'scripts', 'playerPreload.js'),
+        preload: resolve(__dirname, '..', 'static', 'scripts', 'playerPreload.js'),
+        nativeWindowOpen: true
       }
     })
 
-    this.win.loadFile(resolve('static', 'player.html'))
+    this.win.loadFile(resolve(__dirname, '..', 'static', 'player.html'))
   }
 
 }

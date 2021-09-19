@@ -41,8 +41,9 @@ class MainWindow {
       show: false,
       icon: this.appIcon,
       webPreferences: {
-        preload: resolve('static', 'scripts', 'mainPreload.js'),
-        contextIsolation: true
+        preload: resolve(__dirname, '..', 'static', 'scripts', 'mainPreload.js'),
+        contextIsolation: true,
+        nativeWindowOpen: true
       }
     })
 
@@ -50,7 +51,7 @@ class MainWindow {
   }
 
   private async setTitleBar() {
-    const script = readFileSync(resolve(__dirname, '..', '..', 'static', 'scripts', 'setTitleBar.js'))
+    const script = readFileSync(resolve(__dirname, '..', 'static', 'scripts', 'setTitleBar.js'))
 
     await this.win.webContents.executeJavaScript(script.toString())
 
@@ -58,13 +59,13 @@ class MainWindow {
   }
 
   private insertTrackWatcher() {
-    const script = readFileSync(resolve('static', 'scripts', 'trackWatcher.js'))
+    const script = readFileSync(resolve(__dirname, '..', 'static', 'scripts', 'trackWatcher.js'))
 
     this.win.webContents.executeJavaScript(script.toString())
   }
 
   private injectCSS() {
-    const css = readFileSync(resolve(__dirname, '..', '..', 'static', 'css', 'main.css'))
+    const css = readFileSync(resolve(__dirname, '..', 'static', 'css', 'main.css'))
 
     this.win.webContents.insertCSS(css.toString())
   }
