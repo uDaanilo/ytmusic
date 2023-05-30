@@ -43,7 +43,6 @@ class MainWindow {
       webPreferences: {
         preload: resolve(__dirname, '..', 'static', 'scripts', 'mainPreload.js'),
         contextIsolation: true,
-        nativeWindowOpen: true
       }
     })
 

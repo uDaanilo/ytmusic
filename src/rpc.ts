@@ -18,10 +18,10 @@ class DiscordRPC {
     this.login()
   }
 
-  async setActivity({ details, state, length, playing }) {
+  async setActivity({ largeImage, details, state, length, playing }) {
     if(isNaN(length)) return
 
-    this.activity = { ...this.activity, details, state }
+    this.activity = { ...this.activity, details, state, largeImageKey: largeImage }
 
     if(playing) {
       delete this.activity.smallImageKey

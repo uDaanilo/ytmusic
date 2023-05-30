@@ -37,7 +37,8 @@ class App {
         details: track.title,
         state: track.author,
         length: track.length - track.currentTime,
-        playing: track.playing
+        playing: track.playing,
+        largeImage: track.thumbnail
       })
     })
   }

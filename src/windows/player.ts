@@ -36,7 +36,6 @@ class PlayerWindow {
       webPreferences: {
         contextIsolation: true,
         preload: resolve(__dirname, '..', 'static', 'scripts', 'playerPreload.js'),
-        nativeWindowOpen: true
       }
     })
 
