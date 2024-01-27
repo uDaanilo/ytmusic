@@ -1,0 +1,110 @@
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Roboto&display=swap" rel="stylesheet" />
+
+<style>
+  input[type="checkbox"] {
+    height: 0;
+    width: 0;
+    visibility: hidden;
+  }
+
+  label.switch {
+    cursor: pointer;
+    text-indent: -9999px;
+    width: 36px;
+    height: 14px;
+    background: #717070;
+    display: block;
+    border-radius: 100px;
+    position: relative;
+  }
+
+  label.switch:after {
+    content: "";
+    position: absolute;
+    top: -3px;
+    left: 0;
+    width: 20px;
+    height: 20px;
+    background: #909090;
+    border-radius: 20px;
+    transition: 0.3s;
+  }
+
+  input:checked + label.switch {
+    background: #3a5670;
+  }
+
+  input:checked + label.switch:after {
+    left: 100%;
+    background: #3ea6ff;
+    transform: translateX(-100%);
+  }
+
+  #ytm-settings {
+    color: #fff;
+    width: 100%;
+    height: 100%;
+    max-width: 900px;
+    max-height: 595px;
+    background-color: #333;
+    z-index: 999;
+    border-radius: 3px;
+    border: 1px #4e4e4e solid;
+    padding: 0;
+    position: fixed;
+  }
+
+  #ytm-settings p {
+    font-size: 16px;
+  }
+
+  #backdrop {
+    background-color: #000;
+    opacity: 0.6;
+    position: fixed;
+    width: 100%;
+    height: 100%;
+    z-index: 9;
+    top: 0;
+    left: 0;
+  }
+
+  .top {
+    border-bottom: 1px #4e4e4e solid;
+    padding: 19px 24px;
+    display: flex;
+    justify-content: space-between;
+  }
+
+  .content {
+    padding: 24px;
+  }
+
+  .setting-wrapper {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 4px 0;
+  }
+
+  #close {
+    cursor: pointer;
+    font-size: 24px;
+  }
+</style>
+
+<dialog open id="ytm-settings">
+  <div class="top">
+    <span style="margin: 0; font-size: 20px">Application settings</span>
+    <svg id="close" xmlns="http://www.w3.org/2000/svg" height="24px" viewBox="0 0 24 24" width="24px" fill="#FFFFFF">
+      <path d="M0 0h24v24H0V0z" fill="none" />
+      <path
+        d="M19 6.41L17.59 5 12 10.59 6.41 5 5 6.41 10.59 12 5 17.59 6.41 19 12 13.41 17.59 19 19 17.59 13.41 12 19 6.41z"
+      />
+    </svg>
+  </div>
+  <div class="content"></div>
+</dialog>
+<div id="backdrop"></div>

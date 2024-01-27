@@ -1,34 +1,32 @@
 {
   "name": "ytmusic",
-  "version": "1.0.2",
+  "version": "2.0.0",
   "description": "A youtube music app",
   "main": "dist/index.js",
   "author": "uDaanilo",
   "license": "MIT",
   "repository": "github:uDaanilo/ytmusic",
   "scripts": {
-    "start": "tsc && cp -r src/static dist && electron dist",
-    "dev": "tsc && cp -r src/static dist && electron dist NODE_ENV=development",
+    "start": "tsc && ./copy_static_files.sh && electron dist",
+    "dev": "./copy_static_files.sh && tsc-watch --onSuccess \"electron dist NODE_ENV=development\"",
     "build:publish": "electron-builder --publish always",
-    "build": "tsc && cp -r src/static dist && electron-builder build"
+    "build": "tsc && ./copy_static_files.sh && electron-builder build"
   },
   "devDependencies": {
-    "@types/discord-rpc": "^4.0.0",
-    "electron": "^25.0.0",
+    "electron": "^26.2.0",
     "electron-builder": "^22.11.7",
+    "tsc-watch": "^6.0.4",
     "typescript": "^4.4.3"
   },
   "dependencies": {
-    "@cliqz/adblocker-electron": "^1.22.5",
-    "cross-fetch": "^3.1.4",
-    "discord-rpc": "^4.0.1"
+    "winston": "^3.11.0"
   },
   "build": {
     "appId": "com.github.udaanilo.ytmusic",
     "productName": "YTMusic",
     "asar": true,
     "directories": {
-      "output": "out"
+      "output": "build"
     },
     "files": [
       "!src",
@@ -37,10 +35,13 @@
       "!tsconfig.json"
     ],
     "extraFiles": [
-      "dist/static/config.json"
+      "dist/static"
     ],
     "win": {
       "icon": "dist/static/img/icon.png"
+    },
+    "mac": {
+      "icon": "dist/static/img/icon.icns"
     },
     "nsis": {
       "installerIcon": "dist/static/img/icon.ico"

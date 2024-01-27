@@ -1,0 +1,10 @@
+#btn-config {
+  background-color: transparent;
+  border: 0;
+  outline: none;
+  color: #fff;
+  max-height: 25px;
+  cursor: pointer;
+  font-size: 18px;
+  -webkit-app-region: none;
+}

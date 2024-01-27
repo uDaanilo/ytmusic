@@ -5,14 +5,12 @@
 
 <p align="center">A desktop application of <a href="https://music.youtube.com">youtube music</a> with some addicional features</p>
 
-
 ## ✔️ Features
 
-- ⏯ Miniplayer
-- 🚫 Adblock
-- ✨ Discord Rich Prensence
+- ✨ Plugins
 
 ## 🎁 Download
+
 ### You can see all releases [here](https://github.com/uDaanilo/ytmusic/releases)
 
 ## 🚧 Development
@@ -20,15 +18,20 @@
 ### ⚒️ Quick start
 
 1. Cloning repository
+
 ```sh
 $ git clone https://github.com/uDaanilo/ytmusic.git
 ```
+
 2. Downloading dependencies
+
 ```sh
 $ npm i
 $ yarn
 ```
+
 3. Starting project
+
 ```sh
 $ npm run dev
 $ yarn dev
@@ -47,4 +50,5 @@ $ yarn build
 - [Typescript](https://www.typescriptlang.org/)
 
 ## License
+
 This project is under the license MIT

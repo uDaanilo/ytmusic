@@ -1,103 +1,114 @@
-import { BrowserWindow, ipcMain } from "electron"
-import { readFileSync } from "fs"
-import { resolve } from 'path'
+import { BrowserWindow, ipcMain, nativeImage } from "electron"
+import { BaseWindow } from "./base"
+import { YTMUSIC_BASE_URL, YTMUSIC_ICON_PATH } from "../constants"
+import * as path from "path"
+import { readFile } from "node:fs/promises"
+import App from "../app"
+import { logger } from "../utils/logger"
+import { getAppRootPath } from "../utils/getAppRootPath"
 
-class MainWindow {
-  private app: Electron.App
-  public win: Electron.BrowserWindow
-  private appIcon: string
-
-  constructor(app: Electron.App, icon: string) {
-    this.app = app
-    this.appIcon = icon
-    
-    this.init()
-
-    this.win.webContents.on('did-finish-load', () => {
-      process.argv.includes('NODE_ENV=development') ? this.win.webContents.openDevTools() : null
-
-      this.injectCSS()
-      this.setTitleBar()
-      this.insertTrackWatcher()
-    })
-
-    ipcMain.on('minimize-window', () => this.minimizeWindow())
-    ipcMain.on('close-window', (e, exit) => this.closeWindow(exit))
-
-    ipcMain.on('play-pause', () => this.playPause())
-    ipcMain.on('next-track', () => this.nextTrack())
-    ipcMain.on('previous-track', () => this.previousTrack())
-
-    ipcMain.on('show-miniplayer', () => this.win.hide())
-    ipcMain.on('hide-miniplayer', () => this.win.show())
-  }
-  
-  private init() {
-    this.win = new BrowserWindow({
+class MainWindow extends BaseWindow {
+  constructor(app: App) {
+    super(app, {
       width: 1280,
       height: 720,
-      frame: false,
-      backgroundColor: '#000',
-      show: false,
-      icon: this.appIcon,
+      backgroundColor: "#000",
+      show: true,
+      autoHideMenuBar: true,
+      icon: YTMUSIC_ICON_PATH,
       webPreferences: {
-        preload: resolve(__dirname, '..', 'static', 'scripts', 'mainPreload.js'),
-        contextIsolation: true,
-      }
+        preload: path.resolve(
+          getAppRootPath(),
+          "dist",
+          "static",
+          "windows",
+          "main",
+          "preload.js"
+        ),
+      },
     })
 
-    this.win.loadURL('https://music.youtube.com', { userAgent: 'Mozilla/5.0 (Windows NT 6.1; WOW64; rv:54.0) Gecko/20100101 Firefox/71.0' })
+    this.init()
+    this.handleIpcRendererEvents()
   }
 
-  private async setTitleBar() {
-    const script = readFileSync(resolve(__dirname, '..', 'static', 'scripts', 'setTitleBar.js'))
+  private async init() {
+    await this.window.loadURL(this.getLastUrl())
 
-    await this.win.webContents.executeJavaScript(script.toString())
 
-    this.win.show()
-  }
-
-  private insertTrackWatcher() {
-    const script = readFileSync(resolve(__dirname, '..', 'static', 'scripts', 'trackWatcher.js'))
-
-    this.win.webContents.executeJavaScript(script.toString())
-  }
-
-  private injectCSS() {
-    const css = readFileSync(resolve(__dirname, '..', 'static', 'css', 'main.css'))
-
-    this.win.webContents.insertCSS(css.toString())
-  }
-
-  public minimizeWindow() {
-    this.win.minimize()
-  }
-
-  public closeWindow(exit: boolean = false) {
-    if(exit) {
-      this.win.destroy()
-      return
+    if(!this.app.electron.isPackaged) {
+      setTimeout(() => {
+        this.window.webContents.openDevTools()
+      }, 3e3)
     }
 
-    ipcMain.emit('show-miniplayer')
+    await this.injectFrontendScripts()
+    this.window.show()
+
+    if (this.app.settingsManager.settings.return_from_last_url) {
+      this.watchLastUrl()
+    }
   }
 
-  public playPause() {
-    this.win.webContents.executeJavaScript(`
-      document.querySelector('#play-pause-button').click()
+  private async injectAppSettingsHtmlTemplate() {
+    const htmlTemplate = await readFile(
+      "dist/static/windows/main/settings_template.html"
+    )
+    await this.window.webContents.executeJavaScript(`
+      var exports = {}
+
+      const el = document.createElement('div')
+      el.setAttribute('id', 'ytm-app-settings')
+      el.innerHTML = \`${htmlTemplate}\`
+      el.style.width = '100%'
+      el.style.height = '100vh'
+      el.style.position = 'absolute'
+      el.style.top = '0'
+      el.style.display = 'none'
+      el.style.alignItems = 'center'
+      document.body.prepend(el)
+      ;0
     `)
   }
 
-  public nextTrack() {
-    this.win.webContents.executeJavaScript(`
-      document.querySelector('.next-button').click()
-    `)
+  private async injectFrontendScripts() {
+    await this.injectCSSFile("dist/static/windows/main/css/styles.css")
+    await this.injectAppSettingsHtmlTemplate()
+    await this.injectJavascriptFile("dist/static/windows/main/utils.js")
+    await this.injectJavascriptFile("dist/static/windows/main/settings.js")
+    await this.injectJavascriptFile("dist/static/windows/main/titlebar.js")
+    await this.injectJavascriptFile("dist/static/windows/main/index.js")
   }
 
-  public previousTrack() {
-    this.win.webContents.executeJavaScript(`
-      document.querySelector('.previous-button').click()
-    `)
+  private handleIpcRendererEvents() {
+    ipcMain.on("main:minimize", () => {
+      this.window.minimize()
+    })
+  }
+
+  private watchLastUrl() {
+    this.window.webContents.on("did-navigate-in-page", (_e, url) => {
+      this.app.settingsManager.update({
+        last_url: url,
+      })
+    })
+  }
+
+  private getLastUrl() {
+    if (!this.app.settingsManager.settings.return_from_last_url)
+      return YTMUSIC_BASE_URL
+
+    try {
+      const lastUrl = this.app.settingsManager.settings.last_url
+      const lastHostname = new URL(lastUrl).hostname
+      const baseHostName = new URL(YTMUSIC_BASE_URL).hostname
+
+      if (lastHostname !== baseHostName) return YTMUSIC_BASE_URL
+
+      return lastUrl
+    } catch (_err) {
+      return YTMUSIC_BASE_URL
+    }
   }
 }
 
