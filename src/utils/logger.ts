@@ -1,6 +1,9 @@
 import winston from "winston"
 import electron from "electron"
+import { getAppRootPath } from "./getAppRootPath"
+import path from "node:path"
 
+const logsBasePath = path.resolve(getAppRootPath(), "logs")
 export const logger = winston.createLogger({
   level: "info",
   format: winston.format.combine(
@@ -9,12 +12,12 @@ export const logger = winston.createLogger({
   ),
   transports: [
     new winston.transports.File({
-      filename: "logs/error.log",
+      filename: path.resolve(logsBasePath, "errors.log"),
       level: "error",
       handleExceptions: true,
       handleRejections: true,
     }),
-    new winston.transports.File({ filename: "logs/logs.log" }),
+    new winston.transports.File({ filename: path.resolve(logsBasePath, "logs.log") }),
   ],
 })
 
