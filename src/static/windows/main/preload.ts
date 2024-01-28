@@ -36,6 +36,9 @@ type SettingsState = Record<
 export interface Api {
   close: (exit: boolean) => void
   minimize: () => void
+  emit: (eventName: string, ...args: any) => void
+  invoke: <T = any>(eventName: string, ...args: any) => Promise<T>
+  on: (eventName: string, cb: (event: Electron.IpcRendererEvent, ...args: any) => void) => void
   plugins: {
     enable: (name: string) => void
     disable: (name: string) => void
@@ -55,6 +58,15 @@ const api: Api = {
   },
   minimize: () => {
     ipcRenderer.send("main:minimize")
+  },
+  emit: (eventName, ...args) => {
+    ipcRenderer.send(eventName, ...args)
+  },
+  invoke: (eventName, ...args) => {
+    return ipcRenderer.invoke(eventName, ...args)
+  },
+  on: (eventName, cb) => {
+    ipcRenderer.on(eventName, cb)
   },
   plugins: {
     enable(name) {

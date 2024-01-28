@@ -39,7 +39,7 @@ class MainWindow extends BaseWindow {
     if(!this.app.electron.isPackaged) {
       setTimeout(() => {
         this.window.webContents.openDevTools()
-      }, 3e3)
+      }, 1e3)
     }
 
     await this.injectFrontendScripts()
