@@ -1,10 +1,11 @@
-import { ipcMain } from "electron"
+import { ThumbarButton, ipcMain, nativeImage } from "electron"
 import { BaseWindow } from "./base"
 import { YTMUSIC_BASE_URL, YTMUSIC_ICON_PATH } from "../constants"
 import path from "node:path"
 import { readFile } from "node:fs/promises"
 import App from "../app"
 import { getAppRootPath } from "../utils/getAppRootPath"
+import { PlayerState } from "../player"
 
 class MainWindow extends BaseWindow {
   constructor(app: App) {
@@ -29,13 +30,14 @@ class MainWindow extends BaseWindow {
 
     this.init()
     this.handleIpcRendererEvents()
+    this.setTaskbarButtons()
   }
 
   private async init() {
     await this.window.loadURL(this.getLastUrl())
 
 
-    if(!this.app.electron.isPackaged) {
+    if(!this.app.electron.isPackaged || process.argv.includes('--devtools')) {
       setTimeout(() => {
         this.window.webContents.openDevTools()
       }, 1e3)
@@ -106,6 +108,49 @@ class MainWindow extends BaseWindow {
     } catch (_err) {
       return YTMUSIC_BASE_URL
     }
+  }
+
+  private setTaskbarButtons() {
+    const buttons: Record<string, ThumbarButton> = {
+      previous: {
+        tooltip: "Previous",
+        icon: nativeImage.createFromPath(
+          path.resolve(getAppRootPath(), "dist/static/img/prev.png")
+        ),
+        click: this.app.player.previous.bind(this.app.player),
+      },
+      play: {
+        tooltip: "Play",
+        icon: nativeImage.createFromPath(
+          path.resolve(getAppRootPath(), "dist/static/img/play.png")
+        ),
+        click: this.app.player.play.bind(this.app.player),
+      },
+      pause: {
+        tooltip: "Pause",
+        icon: nativeImage.createFromPath(
+          path.resolve(getAppRootPath(), "dist/static/img/pause.png")
+        ),
+        click: this.app.player.pause.bind(this.app.player),
+      },
+      next: {
+        tooltip: "Next",
+        icon: nativeImage.createFromPath(
+          path.resolve(getAppRootPath(), "dist/static/img/next.png")
+        ),
+        click: this.app.player.next.bind(this.app.player),
+      },
+    }
+
+    this.app.player.on("state_change", (state: PlayerState) => {
+      const buttonsToSet = state.isPaused
+        ? [buttons.previous, buttons.play, buttons.next]
+        : [buttons.previous, buttons.pause, buttons.next]
+
+      this.window.setThumbarButtons(buttonsToSet)
+    })
+
+    this.window.setThumbarButtons([buttons.previous, buttons.play, buttons.next])
   }
 }
 

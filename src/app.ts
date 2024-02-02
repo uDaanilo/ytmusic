@@ -11,18 +11,20 @@ class App {
   public settingsManager: SettingsManager
   public player: Player
 
-  private constructor(electron: Electron.App) {
+  constructor(electron: Electron.App) {
     this.electron = electron
     this.electron.whenReady().then(async () => {
       logger.info("Starting app")
       this.settingsManager = new SettingsManager(this)
+      this.player = new Player(this)
       this.settingsManager.enable()
       this.registerWindows()
-      this.player = new Player(this)
+
+      this.mainWindow.onWebContentsDidFinishLoad(this.player.injectWatchScripts.bind(this.player))
     })
   }
 
-  public static start(electron: Electron.App) {
+  public static start(electron: Electron.App): App {
     return new App(electron)
   }
 
@@ -30,13 +32,13 @@ class App {
     this.mainWindow = new MainWindow(this)
   }
 
-  public registerPlugins(
-    newPlugin: Parameters<PluginsManager["registerPlugins"]>[0]
-  ) {
+  public registerPlugins(newPlugin: Parameters<PluginsManager["registerPlugins"]>[0]): App {
     this.electron.whenReady().then(async () => {
       await this.pluginsManager.registerPlugins(newPlugin)
       this.settingsManager.reloadSettings()
     })
+
+    return this
   }
 }
 
