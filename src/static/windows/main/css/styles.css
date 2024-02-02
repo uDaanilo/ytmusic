@@ -8,3 +8,76 @@
   font-size: 18px;
   -webkit-app-region: none;
 }
+
+.ytm-icon-button {
+  display: inline-block;
+  position: relative;
+  padding: 8px;
+  outline: none;
+  cursor: pointer;
+  line-height: 1;
+  width: 40px;
+  height: 40px;
+  box-sizing: border-box !important;
+}
+
+.ytm-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  fill: #747474;
+}
+
+.circular-progress {
+  display: inline-block;
+  animation: 1.4s linear 0s infinite normal none running circular-progress-anim;
+  color: red;
+}
+
+.circular-progress svg {
+  display: block;
+}
+
+.circular-progress svg circle {
+  stroke: currentColor;
+  stroke-dasharray: 80px, 200px;
+  stroke-dashoffset: 0;
+  animation: circular-progress-circle-anim 1.4s ease-in-out infinite;
+}
+
+@keyframes circular-progress-anim {
+  0% {
+    transform: rotate(0deg);
+  }
+  100% {
+    transform: rotate(360deg);
+  }
+}
+
+@keyframes circular-progress-circle-anim {
+  0% {
+    stroke-dasharray: 1px, 200px;
+    stroke-dashoffset: 0;
+  }
+  50% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -15px;
+  }
+  100% {
+    stroke-dasharray: 100px, 200px;
+    stroke-dashoffset: -125px;
+  }
+}
+
+::-webkit-scrollbar-track {
+  background-color: #131313 !important;
+}
+
+::-webkit-scrollbar {
+  width: 6px !important;
+  background: #f4f4f4 !important;
+}
+
+::-webkit-scrollbar-thumb {
+  background: #414141 !important;
+}

@@ -2,7 +2,15 @@ import App from "../app"
 import { YTMUSIC_BASE_URL } from "../constants"
 
 export interface OnRegisterPlugin {
-  register(): Promise<void> | void
+  register(): void
+}
+
+export interface OnEnabledPlugin {
+  enable(): void
+}
+
+export interface OnDisabledPlugin {
+  disable(): void
 }
 
 export abstract class Plugin {
@@ -11,20 +19,15 @@ export abstract class Plugin {
       throw new Error("Plugin name must have 'Plugin'")
   }
 
-  get isRunningOutsideYoutube() {
+  get isAppRunningOutsideYoutube() {
     return !this.app.mainWindow.window.webContents.getURL().includes(YTMUSIC_BASE_URL)
+  }
+
+  public onWebContentsDidFinishLoad(callback: Function) {
+    this.app.pluginsManager.onWebContentsDidFinishLoad(callback)
   }
 
   public get name() {
     return this.constructor.name.replace("Plugin", "")
   }
-
-  public enable() {
-    throw new Error("Method not implemented.")
-  }
-
-  public disable() {
-    throw new Error("Method not implemented.")
-  }
-
 }

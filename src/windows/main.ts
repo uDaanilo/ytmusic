@@ -1,10 +1,9 @@
-import { BrowserWindow, ipcMain, nativeImage } from "electron"
+import { ipcMain } from "electron"
 import { BaseWindow } from "./base"
 import { YTMUSIC_BASE_URL, YTMUSIC_ICON_PATH } from "../constants"
-import * as path from "path"
+import path from "node:path"
 import { readFile } from "node:fs/promises"
 import App from "../app"
-import { logger } from "../utils/logger"
 import { getAppRootPath } from "../utils/getAppRootPath"
 
 class MainWindow extends BaseWindow {
@@ -39,7 +38,7 @@ class MainWindow extends BaseWindow {
     if(!this.app.electron.isPackaged) {
       setTimeout(() => {
         this.window.webContents.openDevTools()
-      }, 3e3)
+      }, 1e3)
     }
 
     await this.injectFrontendScripts()
@@ -51,9 +50,7 @@ class MainWindow extends BaseWindow {
   }
 
   private async injectAppSettingsHtmlTemplate() {
-    const htmlTemplate = await readFile(
-      "dist/static/windows/main/settings_template.html"
-    )
+    const htmlTemplate = await readFile(path.resolve(getAppRootPath(), "dist/static/windows/main/settings_template.html"))
     await this.window.webContents.executeJavaScript(`
       var exports = {}
 

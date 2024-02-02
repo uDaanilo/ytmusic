@@ -88,11 +88,13 @@ export class SettingsManager {
   }
 
   public reloadSettings() {
+    const defaultSettings = this.generateDefaultSettings()
+
     Object.assign(this, {
-      ...this.generateDefaultSettings(),
+      ...defaultSettings,
       ...this.settings,
       plugins: {
-        ...this.generateDefaultSettings().plugins,
+        ...defaultSettings.plugins,
         ...this.settings.plugins,
       },
     })
@@ -107,6 +109,8 @@ export class SettingsManager {
     }
 
     this.app.pluginsManager.getState().forEach((plugin) => {
+      if(!plugin.canBeEnabled) return
+
       defaultSettings.plugins[plugin.name] = {
         enabled: plugin.enabled,
       }
