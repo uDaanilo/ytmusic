@@ -2,12 +2,14 @@ import MainWindow from "./windows/main"
 import { PluginsManager } from "./plugins_manager"
 import { SettingsManager } from "./settings_manager"
 import { logger } from "./utils/logger"
+import { Player } from "./player"
 
 class App {
   public electron: Electron.App
   public mainWindow: MainWindow
   public pluginsManager = new PluginsManager(this)
   public settingsManager: SettingsManager
+  public player: Player
 
   private constructor(electron: Electron.App) {
     this.electron = electron
@@ -16,6 +18,7 @@ class App {
       this.settingsManager = new SettingsManager(this)
       this.settingsManager.enable()
       this.registerWindows()
+      this.player = new Player(this)
     })
   }
 

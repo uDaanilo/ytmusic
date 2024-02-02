@@ -6,12 +6,33 @@ import { getAppRootPath } from "../utils/getAppRootPath"
 
 export class BaseWindow {
   public readonly window: Electron.BrowserWindow
+  private webContentsLoaded = false
+  private onWebContentsDidFinishLoadCallbacks: Array<Function> = []
 
   constructor(
     protected app: App,
     options: Electron.BrowserWindowConstructorOptions
   ) {
     this.window = new BrowserWindow(options)
+    this.handleOnWebContentsDidFinishLoadCallbacks()
+  }
+
+  public onWebContentsDidFinishLoad(callback: Function) {
+    if (this.webContentsLoaded) {
+      callback()
+      return
+    }
+
+    this.onWebContentsDidFinishLoadCallbacks.push(callback)
+  }
+
+  private handleOnWebContentsDidFinishLoadCallbacks() {
+    this.app.electron.whenReady().then(() => {
+      this.window.webContents.on("did-finish-load", async () => {
+        this.webContentsLoaded = true
+        this.onWebContentsDidFinishLoadCallbacks.forEach((cb) => cb())
+      })
+    })
   }
 
   public async injectCSSFile(filePath: string) {

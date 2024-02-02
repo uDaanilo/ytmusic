@@ -1,41 +1,15 @@
+import { contextBridge, ipcRenderer } from "electron"
 import { PluginState } from "../../../plugins_manager"
 import { SettingsManager } from "../../../settings_manager"
 
-const { ipcRenderer, contextBridge } = require("electron")
-
-ipcRenderer.on("plugins:enabled", (_, pluginState) => {
-  const event = new CustomEvent("plugin:enabled", {
-    detail: {
-      pluginState,
-    },
-  })
-
-  window.dispatchEvent(event)
-})
-
-ipcRenderer.on("plugins:disabled", (_, pluginState) => {
-  const event = new CustomEvent("plugin:disabled", {
-    detail: {
-      pluginState,
-    },
-  })
-
-  window.dispatchEvent(event)
-})
-
-type SettingsState = Record<
-  string,
-  {
-    label: string
-    value?: boolean
-    enabled?: boolean
-    isPlugin?: boolean
-  }
->
+type SettingsState = Record<string, {
+  label: string
+  value?: boolean
+  enabled?: boolean
+  isPlugin?: boolean
+}>
 
 export interface Api {
-  close: (exit: boolean) => void
-  minimize: () => void
   emit: (eventName: string, ...args: any) => void
   invoke: <T = any>(eventName: string, ...args: any) => Promise<T>
   on: (eventName: string, cb: (event: Electron.IpcRendererEvent, ...args: any) => void) => void
@@ -51,14 +25,6 @@ export interface Api {
 }
 
 const api: Api = {
-  close: (exit) => {
-    if (typeof exit !== "boolean") return
-
-    ipcRenderer.send("main:close", exit)
-  },
-  minimize: () => {
-    ipcRenderer.send("main:minimize")
-  },
   emit: (eventName, ...args) => {
     ipcRenderer.send(eventName, ...args)
   },

@@ -2,7 +2,7 @@ import App from "../app"
 import { YTMUSIC_BASE_URL } from "../constants"
 
 export interface OnRegisterPlugin {
-  register(): void
+  register(): void | Promise<void>
 }
 
 export interface OnEnabledPlugin {
