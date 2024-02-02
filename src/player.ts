@@ -1,6 +1,7 @@
 import { ipcMain } from "electron"
 import App from "./app"
 import { EventEmitter } from "node:events"
+import { IgnoreWhenRunningOutsideYoutube } from "./utils/ignoreWhenOutsideYoutube"
 
 export interface Track {
   id: string
@@ -22,10 +23,6 @@ export class Player extends EventEmitter {
 
   constructor(private app: App) {
     super()
-
-    this.app.mainWindow.onWebContentsDidFinishLoad(() => {
-      this.injectWatchScripts()
-    })
     this.handleIpcRendererEvents()
   }
 
@@ -37,23 +34,36 @@ export class Player extends EventEmitter {
     return this._isPlaying
   }
 
-  public play() {
-
+  @IgnoreWhenRunningOutsideYoutube()
+  public async play() {
+    await this.app.mainWindow.window.webContents.executeJavaScript(`
+      window.player.playerApi.playVideo()
+    `)
   }
 
-  public pause() {
-
+  @IgnoreWhenRunningOutsideYoutube()
+  public async pause() {
+    await this.app.mainWindow.window.webContents.executeJavaScript(`
+      window.player.playerApi.pauseVideo()
+    `)
   }
 
-  public next() {
-    
+  @IgnoreWhenRunningOutsideYoutube()
+  public async next() {
+    await this.app.mainWindow.window.webContents.executeJavaScript(`
+      window.player.playerApi.nextVideo()
+    `)
   }
 
-  public previous() {
-
+  @IgnoreWhenRunningOutsideYoutube()
+  public async previous() {
+    await this.app.mainWindow.window.webContents.executeJavaScript(`
+      window.player.playerApi.previousVideo()
+    `)
   }
 
-  private async injectWatchScripts() {
+  @IgnoreWhenRunningOutsideYoutube()
+  public async injectWatchScripts() {
     await this.app.mainWindow.window.webContents.executeJavaScript(`
       window.player.playerController.playerApi.addEventListener('onStateChange', (state) => {
         const track = {

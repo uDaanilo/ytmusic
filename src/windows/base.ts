@@ -28,6 +28,10 @@ export class BaseWindow {
 
   private handleOnWebContentsDidFinishLoadCallbacks() {
     this.app.electron.whenReady().then(() => {
+      this.window.webContents.on('did-start-loading', () => {
+        this.webContentsLoaded = false
+      })
+
       this.window.webContents.on("did-finish-load", async () => {
         this.webContentsLoaded = true
         this.onWebContentsDidFinishLoadCallbacks.forEach((cb) => cb())

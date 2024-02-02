@@ -1,5 +1,5 @@
 import App from "../app"
-import { YTMUSIC_BASE_URL } from "../constants"
+import { isRunningOutsideYoutube } from "../utils/ignoreWhenOutsideYoutube"
 
 export interface OnRegisterPlugin {
   register(): void | Promise<void>
@@ -20,7 +20,7 @@ export abstract class Plugin {
   }
 
   get isAppRunningOutsideYoutube() {
-    return !this.app.mainWindow.window.webContents.getURL().includes(YTMUSIC_BASE_URL)
+    return isRunningOutsideYoutube()
   }
 
   public onWebContentsDidFinishLoad(callback: Function) {
