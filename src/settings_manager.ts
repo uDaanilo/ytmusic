@@ -16,9 +16,6 @@ interface Settings {
 }
 
 export class SettingsManager {
-  private settingsPath = this.app.electron.isPackaged
-    ? resolve(this.app.electron.getAppPath(), "..", "..", "settings.json")
-    : resolve(__dirname, "static", "settings.json")
   private readonly return_from_last_url: boolean
   private readonly plugins: { [pluginName: string]: { enabled: boolean } }
   private readonly last_url: string
@@ -33,6 +30,14 @@ export class SettingsManager {
       last_url: this.last_url,
       plugins: this.plugins,
     }
+  }
+
+  private get settingsPath() {
+    if(this.app.electron.isPackaged) {
+      return resolve(this.app.electron.getPath('appData'), 'ytmusic', 'settings.json')
+    }
+
+    return resolve(__dirname, "static", "settings.json")
   }
 
   public enable() {

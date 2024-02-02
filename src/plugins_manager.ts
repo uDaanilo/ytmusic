@@ -35,21 +35,20 @@ export class PluginState {
 
 export class PluginsManager {
   public plugins: Record<string, PluginState> = {}
-  private onWebContentsDidFinishLoadCallbacks: Array<Function> = []
 
   constructor(private app: App) {
     this.handleIpcRendererEvents()
   }
 
   public async registerPlugins(newPlugins: Array<{ new (app: App): Plugin }>) {
-    return new Promise<void>((resolve) => {
+    return new Promise<void>(async (resolve) => {
       for (const NewPlugin of newPlugins) {
         const plugin = new NewPlugin(this.app) as Plugin & Partial<OnRegisterPlugin>
         this.plugins[plugin.name] = new PluginState(plugin.name, false, plugin)
 
         if (typeof plugin.register === "function") {
           logger.info(`Registering ${plugin.name} plugin`)
-          plugin.register()
+          await plugin.register()
           logger.info(`Plugin ${plugin.name} registered`)
         }
 
@@ -57,8 +56,6 @@ export class PluginsManager {
           this.enablePlugin(plugin.name)
         }
       }
-
-      this.handleOnWebContentsDidFinishLoadCallbacks()
 
       resolve()
     })
@@ -76,6 +73,8 @@ export class PluginsManager {
 
   public disablePlugin(pluginName: string) {
     const plugin = this.plugins[pluginName]
+
+    plugin.disable()
     logger.info(`Plugin ${plugin.name} disabled`)
     this.app.mainWindow.window.webContents.send("plugins:disabled", plugin.toJSON())
   }
@@ -87,17 +86,7 @@ export class PluginsManager {
   }
 
   public onWebContentsDidFinishLoad(callback: Function) {
-    this.onWebContentsDidFinishLoadCallbacks.push(callback)
-  }
-
-  private handleOnWebContentsDidFinishLoadCallbacks() {
-    this.app.electron.whenReady().then(() => {
-      this.app.mainWindow.window.webContents.on("did-finish-load", async () => {
-        for(const callback of this.onWebContentsDidFinishLoadCallbacks) {
-          await callback()
-        }
-      })
-    })
+    this.app.mainWindow.onWebContentsDidFinishLoad(callback)
   }
 
   public handleIpcRendererEvents() {
