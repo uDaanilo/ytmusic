@@ -36,7 +36,6 @@ class MainWindow extends BaseWindow {
   private async init() {
     await this.window.loadURL(this.getLastUrl())
 
-
     if(!this.app.electron.isPackaged || process.argv.includes('--devtools')) {
       setTimeout(() => {
         this.window.webContents.openDevTools()
