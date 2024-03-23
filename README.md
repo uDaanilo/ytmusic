@@ -7,7 +7,9 @@
 
 ## ✔️ Features
 
-- ✨ Plugins
+- ✨ Custom Plugins
+- ⬇️ Download music
+- 👌 Starts on last song listened
 
 ## 🎁 Download
 
