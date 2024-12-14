@@ -112,7 +112,6 @@ export class Player extends EventEmitter {
       }
 
       window.api.on('player:get_state', () => window.api.emit('player:state_change', getState()))
-      console.log(window.player.playerController.playerApi.addEventListener)
       window.player.playerController.playerApi.addEventListener('onStateChange', (state) => {
         if(state !== PLAYER_STATE_CODES.PLAYING && state !== PLAYER_STATE_CODES.PAUSED && state !== PLAYER_STATE_CODES.BUFFERING) return
 
@@ -123,7 +122,7 @@ export class Player extends EventEmitter {
 
   public handleIpcRendererEvents() {
     ipcMain.on("player:state_change", async (_event, state: PlayerState & { isPlaying: boolean }) => {
-      this.emit('state_change', {
+      this.emit("state_change", {
         track: state.track,
         currentTime: state.currentTime,
         isPaused: state.isPaused,

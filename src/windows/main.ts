@@ -17,14 +17,7 @@ class MainWindow extends BaseWindow {
       autoHideMenuBar: true,
       icon: YTMUSIC_ICON_PATH,
       webPreferences: {
-        preload: path.resolve(
-          getAppRootPath(),
-          "dist",
-          "static",
-          "windows",
-          "main",
-          "preload.js"
-        ),
+        preload: path.resolve(getAppRootPath(), "dist", "static", "windows", "main", "preload.js"),
       },
     })
 
@@ -36,7 +29,7 @@ class MainWindow extends BaseWindow {
   private async init() {
     await this.window.loadURL(this.getLastUrl())
 
-    if(!this.app.electron.isPackaged || process.argv.includes('--devtools')) {
+    if (!this.app.electron.isPackaged || process.argv.includes("--devtools")) {
       setTimeout(() => {
         this.window.webContents.openDevTools()
       }, 1e3)
@@ -51,13 +44,13 @@ class MainWindow extends BaseWindow {
   }
 
   private async injectAppSettingsHtmlTemplate() {
-    const htmlTemplate = await readFile(path.resolve(getAppRootPath(), "dist/static/windows/main/settings_template.html"))
+    const htmlTemplate = await readFile(
+      path.resolve(getAppRootPath(), "dist/static/windows/main/settings_template.html")
+    )
     await this.window.webContents.executeJavaScript(`
-      var exports = {}
-
       const el = document.createElement('div')
       el.setAttribute('id', 'ytm-app-settings')
-      el.innerHTML = \`${htmlTemplate}\`
+      el.innerHTML = window.trustedTypes.createPolicy("ytmAppSettings", { createHTML: (input) => input }).createHTML(\`${htmlTemplate}\`)
       el.style.width = '100%'
       el.style.height = '100vh'
       el.style.position = 'absolute'
@@ -71,6 +64,7 @@ class MainWindow extends BaseWindow {
 
   private async injectFrontendScripts() {
     await this.injectCSSFile("dist/static/windows/main/css/styles.css")
+    await this.window.webContents.executeJavaScript("var exports = {};")
     await this.injectAppSettingsHtmlTemplate()
     await this.injectJavascriptFile("dist/static/windows/main/utils.js")
     await this.injectJavascriptFile("dist/static/windows/main/settings.js")
@@ -93,8 +87,7 @@ class MainWindow extends BaseWindow {
   }
 
   private getLastUrl() {
-    if (!this.app.settingsManager.settings.return_from_last_url)
-      return YTMUSIC_BASE_URL
+    if (!this.app.settingsManager.settings.return_from_last_url) return YTMUSIC_BASE_URL
 
     try {
       const lastUrl = this.app.settingsManager.settings.last_url
@@ -113,30 +106,22 @@ class MainWindow extends BaseWindow {
     const buttons: Record<string, ThumbarButton> = {
       previous: {
         tooltip: "Previous",
-        icon: nativeImage.createFromPath(
-          path.resolve(getAppRootPath(), "dist/static/img/prev.png")
-        ),
+        icon: nativeImage.createFromPath(path.resolve(getAppRootPath(), "dist/static/img/prev.png")),
         click: this.app.player.previous.bind(this.app.player),
       },
       play: {
         tooltip: "Play",
-        icon: nativeImage.createFromPath(
-          path.resolve(getAppRootPath(), "dist/static/img/play.png")
-        ),
+        icon: nativeImage.createFromPath(path.resolve(getAppRootPath(), "dist/static/img/play.png")),
         click: this.app.player.play.bind(this.app.player),
       },
       pause: {
         tooltip: "Pause",
-        icon: nativeImage.createFromPath(
-          path.resolve(getAppRootPath(), "dist/static/img/pause.png")
-        ),
+        icon: nativeImage.createFromPath(path.resolve(getAppRootPath(), "dist/static/img/pause.png")),
         click: this.app.player.pause.bind(this.app.player),
       },
       next: {
         tooltip: "Next",
-        icon: nativeImage.createFromPath(
-          path.resolve(getAppRootPath(), "dist/static/img/next.png")
-        ),
+        icon: nativeImage.createFromPath(path.resolve(getAppRootPath(), "dist/static/img/next.png")),
         click: this.app.player.next.bind(this.app.player),
       },
     }

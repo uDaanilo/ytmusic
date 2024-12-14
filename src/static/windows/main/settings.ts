@@ -65,7 +65,7 @@ export class YTMAppSettings {
         newSetting.inputElement.checked = state.value ?? state.enabled
         newSetting.inputElement.addEventListener("change", (e) => {
           const target = e.target as HTMLInputElement
-          let updatedSetting: | Record<string, boolean> | { plugins: Record<string, { enabled: boolean }> } = {
+          let updatedSetting: Record<string, boolean> | { plugins: Record<string, { enabled: boolean }> } = {
             [settingsName]: target.checked,
           }
 
