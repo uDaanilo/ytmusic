@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-plugins-get-state"
+description = "Enables the plugins_get_state command without any pre-configured scope."
+commands.allow = ["plugins_get_state"]
+
+[[permission]]
+identifier = "deny-plugins-get-state"
+description = "Denies the plugins_get_state command without any pre-configured scope."
+commands.deny = ["plugins_get_state"]

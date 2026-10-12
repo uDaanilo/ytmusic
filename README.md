@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="64px" src="src/static/img/icon.png">
+  <img width="64px" src="src-tauri/icons/icon.png">
 </p>
 <h1 align="center">YTMusic</h1>
 
@@ -10,6 +10,8 @@
 - ✨ Custom Plugins
 - ⬇️ Download music
 - 👌 Starts on last song listened
+- 🎛️ Tray menu and media keys
+- 🔌 Websocket remote control and Discord rich presence
 
 ## 🎁 Download
 
@@ -25,30 +27,36 @@
 $ git clone https://github.com/uDaanilo/ytmusic.git
 ```
 
-2. Downloading dependencies
+2. Installing prerequisites
+
+- [Rust](https://www.rust-lang.org/tools/install) and the [Tauri prerequisites](https://tauri.app/start/prerequisites/) for your OS
+- Node.js and Yarn
+
+3. Downloading dependencies and the yt-dlp/ffmpeg binaries
 
 ```sh
-$ npm i
 $ yarn
+$ yarn sidecars
 ```
 
-3. Starting project
+4. Starting project
 
 ```sh
-$ npm run dev
 $ yarn dev
 ```
 
 ### 🧩 Building project
 
 ```sh
-$ npm run build
 $ yarn build
 ```
 
+Releases are built by the `Release` GitHub workflow when a `v*` tag is pushed.
+
 ## 🚀 Built with
 
-- [Electron](https://electronjs.org)
+- [Tauri](https://tauri.app)
+- [Rust](https://www.rust-lang.org)
 - [Typescript](https://www.typescriptlang.org/)
 
 ## License

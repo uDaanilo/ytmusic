@@ -1,0 +1,11 @@
+# Automatically generated - DO NOT EDIT!
+
+[[permission]]
+identifier = "allow-download-track-select-path"
+description = "Enables the download_track_select_path command without any pre-configured scope."
+commands.allow = ["download_track_select_path"]
+
+[[permission]]
+identifier = "deny-download-track-select-path"
+description = "Denies the download_track_select_path command without any pre-configured scope."
+commands.deny = ["download_track_select_path"]

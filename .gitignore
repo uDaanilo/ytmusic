@@ -1,5 +1,8 @@
-dist
+dist-web
 node_modules
 build
 *.log
 logs
+src-tauri/target
+src-tauri/binaries/*
+!src-tauri/binaries/.gitkeep
