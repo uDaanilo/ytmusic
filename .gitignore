@@ -1,5 +1,9 @@
-dist
+dist-web
 node_modules
 build
+.DS_Store
 *.log
 logs
+src/target
+src/binaries/*
+!src/binaries/.gitkeep

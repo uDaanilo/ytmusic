@@ -1,0 +1,19 @@
+{
+  "$schema": "../gen/schemas/desktop-schema.json",
+  "identifier": "ytmusic",
+  "description": "Lets the remote YouTube Music page talk to the app",
+  "windows": ["main"],
+  "remote": {
+    "urls": ["https://music.youtube.com/*"]
+  },
+  "permissions": [
+    "core:event:default",
+    "allow-settings-get-state",
+    "allow-settings-update",
+    "allow-plugins-get-state",
+    "allow-plugins-enable",
+    "allow-plugins-disable",
+    "allow-download-track-select-path",
+    "allow-download-track-download"
+  ]
+}
