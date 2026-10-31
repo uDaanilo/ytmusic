@@ -1,8 +1,9 @@
 dist-web
 node_modules
 build
+.DS_Store
 *.log
 logs
-src-tauri/target
-src-tauri/binaries/*
-!src-tauri/binaries/.gitkeep
+src/target
+src/binaries/*
+!src/binaries/.gitkeep

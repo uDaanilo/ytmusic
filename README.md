@@ -1,5 +1,5 @@
 <p align="center">
-  <img width="64px" src="src-tauri/icons/icon.png">
+  <img width="64px" src="src/icons/icon.png">
 </p>
 <h1 align="center">YTMusic</h1>
 

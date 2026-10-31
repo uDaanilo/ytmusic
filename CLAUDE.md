@@ -4,26 +4,26 @@ This file provides guidance to Claude Code (claude.ai/code) when working with co
 
 ## Project
 
-Tauri 2 desktop wrapper around https://music.youtube.com (migrated from Electron), with a Rust backend and a TypeScript script injected into the YTM page. Extra features are plugins: volume normalization, track download, Discord RPC, and a socket.io remote-control server. Windows (WebView2) is the release target.
+Tauri 2 desktop wrapper around https://music.youtube.com (migrated from Electron), with a Rust backend and a TypeScript script injected into the YTM page. Extra features are plugins: volume normalization, track download, Discord RPC, and a socket.io remote-control server. Releases target Windows (WebView2), macOS (WKWebView) and Linux (WebKitGTK).
 
 ## Commands
 
-- `yarn sidecars [target-triple]` — download yt-dlp and ffmpeg into `src-tauri/binaries/` (gitignored). Required before the first build: Tauri fails if the `externalBin` files for the current target are missing.
+- `yarn sidecars [target-triple]` — download yt-dlp and ffmpeg into `src/binaries/` (gitignored). Required before the first build: Tauri fails if the `externalBin` files for the current target are missing.
 - `yarn dev` — `tauri dev` (runs `yarn build:web` first, opens devtools)
 - `yarn build` — release build + NSIS installer
 - `yarn build:web` — esbuild bundle of `web/` into `dist-web/inject.js`
 - `yarn typecheck:web` — esbuild doesn't type-check; run this for `web/`
-- In `src-tauri/`: `cargo clippy`, `cargo fmt`. `dist-web/inject.js` must exist first, since it's embedded with `include_str!`.
+- In `src/`: `cargo clippy`, `cargo fmt`. `dist-web/inject.js` must exist first, since it's embedded with `include_str!`.
 
-There are no tests. Releases come from `.github/workflows/release.yml` (tauri-action on `windows-latest`, triggered by `v*` tags). The app version is read from `package.json`.
+There are no tests. Releases come from `.github/workflows/release.yml` (tauri-action matrix: Windows x64, macOS arm64 + x64, Linux x64; triggered by `v*` tags). The app version is read from `package.json`.
 
-`tauri dev` only watches `src-tauri/`. After editing `web/`, run `yarn build:web` and touch a Rust file to reload.
+`tauri dev` only watches `src/`. After editing `web/`, run `yarn build:web` and touch a Rust file to reload.
 
 ## Architecture
 
-The window loads the remote YTM site. Everything happens through `web/`, which is bundled and registered as the window's `initialization_script` (`src-tauri/src/main.rs`). That script runs on every navigation, and `web/index.ts` bails out unless the host is `music.youtube.com`, so Google sign-in pages are left alone.
+The window loads the remote YTM site. Everything happens through `web/`, which is bundled and registered as the window's `initialization_script` (`src/src/main.rs`). That script runs on every navigation, and `web/index.ts` bails out unless the host is `music.youtube.com`, so Google sign-in pages are left alone.
 
-**Remote-origin IPC.** The page is a remote origin, so it can only call what `src-tauri/capabilities/ytmusic.json` allows. A new `#[tauri::command]` has to be added in three places:
+**Remote-origin IPC.** The page is a remote origin, so it can only call what `src/capabilities/ytmusic.json` allows. A new `#[tauri::command]` has to be added in three places:
 - `generate_handler!` in `main.rs`
 - the `AppManifest` command list in `build.rs`
 - an `allow-<command-name>` entry in the capability
@@ -46,7 +46,7 @@ Without that, the call is rejected at runtime.
 
 ## Plugins
 
-Rust plugins implement the `Plugin` trait (`src-tauri/src/plugins/mod.rs`) and are listed in `main.rs`.
+Rust plugins implement the `Plugin` trait (`src/src/plugins/mod.rs`) and are listed in `main.rs`.
 - `name()` is the settings key and must stay stable (`NormalizeVolume`, `DownloadTrack`, `DiscordRpc`, `Websocket`); settings files from the Electron version use the same keys.
 - Plugins with `can_be_enabled() == false` are always on and hidden from the settings UI.
 

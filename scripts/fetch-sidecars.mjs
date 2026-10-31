@@ -1,4 +1,4 @@
-// Downloads the yt-dlp and ffmpeg sidecar binaries into src-tauri/binaries, named with the
+// Downloads the yt-dlp and ffmpeg sidecar binaries into src/binaries, named with the
 // target triple suffix Tauri expects (e.g. yt-dlp-x86_64-pc-windows-msvc.exe).
 //
 // Usage: node scripts/fetch-sidecars.mjs [target-triple]   (defaults to the host triple)
@@ -25,7 +25,7 @@ if (!assets) {
   process.exit(1)
 }
 
-const binDir = resolve(dirname(fileURLToPath(import.meta.url)), "..", "src-tauri", "binaries")
+const binDir = resolve(dirname(fileURLToPath(import.meta.url)), "..", "src", "binaries")
 mkdirSync(binDir, { recursive: true })
 
 async function download(url) {
